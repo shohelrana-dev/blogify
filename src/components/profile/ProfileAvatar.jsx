@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import EditIcon from '~/assets/icons/edit.svg?react'
 import GalleryIcon from '~/assets/icons/gallery.svg?react'
+import useAuthDispatch from '~/hooks/useAuthDispatch'
 import useAuthState from '~/hooks/useAuthState'
 import useSelectFile from '~/hooks/useSelectFIle'
 import { useUploadAvatarMutation } from '~/services/profile.service'
@@ -15,6 +16,7 @@ export default function ProfileAvatar({ userId, name, avatar }) {
    const [isOpen, setIsOpen] = useState(false)
    const { inputRef, handleClick, handleChange, selectedFile, removeSelectedFile } = useSelectFile()
    const uploadAvatarMutation = useUploadAvatarMutation()
+   const authDispatch = useAuthDispatch()
 
    const openModal = () => setIsOpen(true)
    const closeModal = () => {
@@ -27,7 +29,8 @@ export default function ProfileAvatar({ userId, name, avatar }) {
       formData.append('avatar', selectedFile)
 
       try {
-         await uploadAvatarMutation.mutateAsync(formData)
+         const { user } = await uploadAvatarMutation.mutateAsync(formData)
+         authDispatch({ type: 'updated', payload: { ...currentUser, avatar: user.avatar } })
          closeModal()
       } catch (err) {
          console.error(err)
@@ -45,7 +48,7 @@ export default function ProfileAvatar({ userId, name, avatar }) {
                className='rounded-full object-cover  h-[120px] w-[120px]'
             />
          ) : (
-            <div className='w-full h-full bg-orange-600 text-white grid place-items-center text-5xl rounded-full'>
+            <div className='h-[120px] w-[120px] bg-orange-600 text-white grid place-items-center text-5xl rounded-full'>
                <span className=''>{name[0].toUpperCase()}</span>
             </div>
          )}

@@ -6,6 +6,10 @@ export default function authReducer(state, { type, payload }) {
          state.user = payload
          break
 
+      case 'updated':
+         state.user = payload
+         break
+
       case 'logout':
          state.isChecked = true
          state.isAuthenticated = false

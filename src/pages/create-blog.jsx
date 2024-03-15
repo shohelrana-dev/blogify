@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { useNavigate } from 'react-router-dom'
 import GalleryIcon from '~/assets/icons/gallery.svg?react'
@@ -7,6 +8,7 @@ import ButtonOutlined from '~/components/ui/ButtonOutlined'
 import Transition from '~/components/ui/Transition'
 import useSelectFile from '~/hooks/useSelectFIle'
 import { useCreateBlogMutation } from '~/services/blog.service'
+import { APP_NAME } from '~/utils/constants'
 
 export default function CreateBLogPage() {
    const { register, handleSubmit, formState, reset } = useForm()
@@ -15,6 +17,10 @@ export default function CreateBLogPage() {
    const navigate = useNavigate()
 
    const { errors } = formState
+
+   useEffect(() => {
+      document.title = `Create Blog | ${APP_NAME}`
+   }, [])
 
    async function handleCreateBlog(payload) {
       const formData = new FormData()
@@ -25,7 +31,7 @@ export default function CreateBLogPage() {
       try {
          const data = await createBlogMutate(formData)
          reset()
-         navigate(`/blogs/${data.blog.id}`)
+         navigate(`/blogs/${data?.blog?.id || data?.data?.blog?.id}`)
       } catch (err) {
          console.error(err)
       }

@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { Link } from 'react-router-dom'
 import PasswordField from '~/components/form/PasswordField'
@@ -6,6 +7,7 @@ import AuthLayout from '~/components/layouts/AuthLayout'
 import Button from '~/components/ui/Button'
 import useAuthDispatch from '~/hooks/useAuthDispatch'
 import { useLoginMutation } from '~/services/auth.service'
+import { APP_NAME } from '~/utils/constants'
 import { loginRules as rules } from '~/utils/validation-rules'
 
 export default function LoginPage() {
@@ -14,6 +16,10 @@ export default function LoginPage() {
    const dispatch = useAuthDispatch()
 
    const { errors } = formState
+
+   useEffect(() => {
+      document.title = `Login | ${APP_NAME}`
+   }, [])
 
    async function handleLogin(payload) {
       try {
@@ -28,7 +34,7 @@ export default function LoginPage() {
    return (
       <AuthLayout title='Login'>
          <form onSubmit={handleSubmit(handleLogin)}>
-            <TextField label='Email' error={errors.email} {...register('email', rules.firstName)} />
+            <TextField label='Email' error={errors.email} {...register('email', rules.email)} />
 
             <PasswordField
                label='Password'

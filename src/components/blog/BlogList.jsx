@@ -1,10 +1,10 @@
-import useInfiniteBlogsQuery from '~/hooks/useInfiniteBlogsQuery'
+import useInfiniteBlogsSuspenseQuery from '~/services/blog.service'
 import InfiniteScroll from '../InfiniteScroll'
 import Loader from '../ui/Loader'
 import BlogCard from './BlogCard'
 
 export default function BlogList() {
-   const { blogs, hasNextPage, fetchNextPage } = useInfiniteBlogsQuery()
+   const { blogs, hasNextPage, fetchNextPage } = useInfiniteBlogsSuspenseQuery()
 
    return (
       <>

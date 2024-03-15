@@ -1,7 +1,13 @@
+import { useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import Button from '~/components/ui/Button'
+import { APP_NAME } from '~/utils/constants'
 
 export default function NotFoundPage() {
+   useEffect(() => {
+      document.title = `Not Found | ${APP_NAME}`
+   }, [])
+
    return (
       <div className='h-screen-content flex flex-grow items-center justify-center'>
          <div className='rounded-lg bg-gray-900 p-8 text-center shadow-xl flex flex-col items-center'>

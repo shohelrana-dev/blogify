@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import CommentForm from '~/components/single-blog/CommentForm'
 import CommentItem from '~/components/single-blog/CommentItem'
@@ -7,6 +8,7 @@ import Error from '~/components/ui/Error'
 import PageLoader from '~/components/ui/PageLoader'
 import Transition from '~/components/ui/Transition'
 import { useGetSingleBlogQuery } from '~/services/blog.service'
+import { APP_NAME } from '~/utils/constants'
 import { getBlogThumbnailUrl } from '~/utils/image-url'
 import NotFoundPage from './not-found'
 
@@ -14,12 +16,16 @@ export default function SingleBlogPage() {
    const { blogId } = useParams()
    const { data: blog, isLoading, isError, error } = useGetSingleBlogQuery(blogId)
 
+   useEffect(() => {
+      document.title = `${blog?.title} | ${APP_NAME}`
+   }, [blog])
+
    if (isLoading) return <PageLoader />
    else if (isError && error.response?.status === 404) return <NotFoundPage />
    else if (isError) return <Error>{error.message}</Error>
 
    const { title, author, createdAt, likes, thumbnail, tags, content, comments } = blog
-   const { firstName, lastName, avatar } = author
+   const { firstName, lastName, avatar } = author || {}
 
    return (
       <Transition>
@@ -44,11 +50,13 @@ export default function SingleBlogPage() {
                      </span>
                      <span className='text-sm text-slate-700 dot'>{likes?.length || 0} Likes</span>
                   </div>
-                  <img
-                     className='mx-auto w-full md:w-8/12 object-cover h-80 md:h-96'
-                     src={getBlogThumbnailUrl(thumbnail)}
-                     alt={title}
-                  />
+                  {!!thumbnail && (
+                     <img
+                        className='mx-auto w-full md:w-8/12 object-cover h-80 md:h-96'
+                        src={getBlogThumbnailUrl(thumbnail)}
+                        alt={title}
+                     />
+                  )}
 
                   {/* Tags */}
                   <ul className='tags'>
@@ -58,9 +66,10 @@ export default function SingleBlogPage() {
                   </ul>
 
                   {/* Content */}
-                  <div className='mx-auto w-full md:w-10/12 text-slate-300 text-base md:text-lg leading-8 py-2 !text-left'>
-                     {content}
-                  </div>
+                  <div
+                     className='mx-auto w-full md:w-10/12 text-slate-300 text-base md:text-lg leading-8 py-2 !text-left'
+                     dangerouslySetInnerHTML={{ __html: content }}
+                  />
                </div>
             </section>
             {/* End Blogs */}
@@ -75,7 +84,7 @@ export default function SingleBlogPage() {
                   {comments &&
                      comments.map((comment) => <CommentItem key={comment.id} comment={comment} />)}
 
-                  {comments?.length === 0 && <p className='p-3 bg-gray-900'>No comments found.</p>}
+                  {comments?.length === 0 && <p className='p-3 mt-3 bg-gray-900'>No comments found.</p>}
                </div>
             </section>
 

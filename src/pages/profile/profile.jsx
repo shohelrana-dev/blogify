@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import { useParams } from 'react-router-dom'
 import BlogCard from '~/components/blog/BlogCard'
 import ProfileAvatar from '~/components/profile/ProfileAvatar'
@@ -7,10 +8,15 @@ import PageLoader from '~/components/ui/PageLoader'
 import Transition from '~/components/ui/Transition'
 import NotFoundPage from '~/pages/not-found'
 import { useGetProfileQuery } from '~/services/profile.service'
+import { APP_NAME } from '~/utils/constants'
 
 export default function ProfilePage() {
    const { userId } = useParams()
-   const { data: user, isLoading, isError, error } = useGetProfileQuery()
+   const { data: user, isLoading, isError, error } = useGetProfileQuery(userId)
+
+   useEffect(() => {
+      document.title = `${user?.firstName} ${user?.lastName} | ${APP_NAME}`
+   }, [user])
 
    if (isLoading) return <PageLoader />
    else if (isError && error.response?.status === 404) return <NotFoundPage />
@@ -38,7 +44,6 @@ export default function ProfilePage() {
                   <ProfileBio userId={userId} bio={user.bio} />
                </div>
 
-               {/* end profile info */}
                <h4 className='mt-6 text-xl lg:mt-8 lg:text-2xl'>Your Blogs</h4>
                <div className='my-6 space-y-4'>
                   {user.blogs && user.blogs.map((blog) => <BlogCard key={blog.id} blog={blog} />)}

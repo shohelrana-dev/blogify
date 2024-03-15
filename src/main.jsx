@@ -11,23 +11,23 @@ import ConfirmAlertProvider from './providers/ConfirmAlertProvider.jsx'
 import UnauthorizedAlertProvider from './providers/UnauthorizedAlertProvider.jsx'
 
 const queryClient = new QueryClient({
-   defaultOptions: { queries: { refetchOnMount: false } },
+   defaultOptions: { queries: { staleTime: 1000 * 60 * 5 } },
 })
 
 ReactDOM.createRoot(document.getElementById('root')).render(
    <React.StrictMode>
       <BrowserRouter>
-         <QueryClientProvider client={queryClient}>
-            <AuthProvider>
-               <ConfirmAlertProvider>
-                  <UnauthorizedAlertProvider>
+         <UnauthorizedAlertProvider>
+            <QueryClientProvider client={queryClient}>
+               <AuthProvider>
+                  <ConfirmAlertProvider>
                      <App />
                      <ToastContainer position='top-right' theme='dark' />
                      <ReactQueryDevtools initialIsOpen={false} />
-                  </UnauthorizedAlertProvider>
-               </ConfirmAlertProvider>
-            </AuthProvider>
-         </QueryClientProvider>
+                  </ConfirmAlertProvider>
+               </AuthProvider>
+            </QueryClientProvider>
+         </UnauthorizedAlertProvider>
       </BrowserRouter>
    </React.StrictMode>
 )

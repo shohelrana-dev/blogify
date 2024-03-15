@@ -1,8 +1,8 @@
 import { Link } from 'react-router-dom'
-import { useGetPopularBlogsQuery } from '~/services/blog.service'
+import { useGetPopularBlogsSuspenseQuery } from '~/services/blog.service'
 
 export default function PopularBlogList() {
-   const { data } = useGetPopularBlogsQuery()
+   const { data } = useGetPopularBlogsSuspenseQuery()
 
    const { blogs } = data || {}
 

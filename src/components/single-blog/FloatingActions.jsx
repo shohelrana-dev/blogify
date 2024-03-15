@@ -5,16 +5,26 @@ import heartIcon from '~/assets/icons/heart.svg'
 import likeFilledIcon from '~/assets/icons/like-filled.svg'
 import likeIcon from '~/assets/icons/like.svg'
 import useAuthState from '~/hooks/useAuthState'
+import useUnauthorizedAlert from '~/hooks/useUnauthorizedAlert'
 import { useToggleFavouriteMutation, useToggleLikeMutation } from '~/services/blog.service'
 
 export default function FloatingActions({ blog }) {
-   const { user: currentUser, isAuthenticated } = useAuthState())
+   const { user: currentUser, isAuthenticated } = useAuthState()
    const toggleLikeMutation = useToggleLikeMutation()
    const toggleFavouriteMutation = useToggleFavouriteMutation()
-   const [isLiked, setIsLiked] = useState(blog.likes.includes(currentUser.id))
+   const [isLiked, setIsLiked] = useState(blog.likes.includes(currentUser?.id))
    const [isFavourite, setIsFavourite] = useState(blog.isFavourite)
+   const unauthorizedAlert = useUnauthorizedAlert()
 
    async function handleLikeClick() {
+      if (!isAuthenticated) {
+         return unauthorizedAlert({
+            title: 'Login or Signup to like posts.',
+            message:
+               'Like on blogs requires authentication. Please take a moment to either sign in with your existing account or create a new one.',
+         })
+      }
+
       try {
          const data = await toggleLikeMutation.mutateAsync(blog.id)
          setIsLiked(data.isLiked)
@@ -24,15 +34,21 @@ export default function FloatingActions({ blog }) {
    }
 
    async function handleFavouritClick() {
+      if (!isAuthenticated) {
+         return unauthorizedAlert({
+            title: 'Login or Signup to add favourite.',
+            message:
+               'Add favourite blogs requires authentication. Please take a moment to either sign in with your existing account or create a new one.',
+         })
+      }
+
       try {
-         await toggleFavouriteMutation.mutateAsync(blog.id)
+         const { isFavourite } = await toggleFavouriteMutation.mutateAsync(blog.id)
          setIsFavourite(isFavourite)
       } catch (err) {
          console.error(err)
       }
    }
-
-   if (!isAuthenticated) return null
 
    return (
       <div className='floating-action'>

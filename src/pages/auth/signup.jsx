@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { Link } from 'react-router-dom'
 import PasswordField from '~/components/form/PasswordField'
@@ -6,6 +7,7 @@ import AuthLayout from '~/components/layouts/AuthLayout'
 import Button from '~/components/ui/Button'
 import useAuthDispatch from '~/hooks/useAuthDispatch'
 import { useSignupMutation } from '~/services/auth.service'
+import { APP_NAME } from '~/utils/constants'
 import { signupRules as rules } from '~/utils/validation-rules'
 
 export default function SignupPage() {
@@ -14,6 +16,10 @@ export default function SignupPage() {
    const dispatch = useAuthDispatch()
 
    const { errors } = formState
+
+   useEffect(() => {
+      document.title = `Signup | ${APP_NAME}`
+   }, [])
 
    async function handleSignup(payload) {
       try {

@@ -17,7 +17,6 @@ const SignupPage = lazy(() => import('~/pages/auth/signup'))
 const HomePage = lazy(() => import('~/pages/home'))
 const CreateBlogPage = lazy(() => import('~/pages/create-blog'))
 const SingleBlogPage = lazy(() => import('~/pages/single-blog'))
-const TestPage = lazy(() => import('~/pages/test-page'))
 
 export default function App() {
    return (
@@ -31,7 +30,6 @@ export default function App() {
                   <Route path='/' exact element={<HomePage />} />
                   <Route path='/profile/:userId' element={<ProfilePage />} />
                   <Route path='/blogs/:blogId' element={<SingleBlogPage />} />
-                  <Route path='/test-page' element={<TestPage />} />
 
                   {/* Authenticted Routes */}
                   <Route element={<AuthGuard />}>

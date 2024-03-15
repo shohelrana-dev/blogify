@@ -2,6 +2,7 @@ import { motion } from 'framer-motion'
 import { useEffect } from 'react'
 import { createPortal } from 'react-dom'
 import closeIcon from '~/assets/icons/close.svg'
+import usePortal from '~/hooks/usePortal'
 import cn from '~/utils/cn'
 import IconButton from './IconButton'
 
@@ -15,6 +16,7 @@ const classes = {
 }
 
 export default function Modal(props) {
+   const portalRoot = usePortal()
    const { title, header, footer, children, open, className, onOpenChange, onClose, hideIcon } = props
 
    useEffect(() => {
@@ -68,6 +70,6 @@ export default function Modal(props) {
             {!!footer && <footer>{footer}</footer>}
          </motion.div>
       </div>,
-      document.body
+      portalRoot
    )
 }

@@ -1,13 +1,18 @@
-import { Suspense } from 'react'
+import { Suspense, useEffect } from 'react'
 import { ErrorBoundary } from 'react-error-boundary'
 import BlogList from '~/components/blog/BlogList'
 import Sidebar from '~/components/home/Sidebar'
 import Error from '~/components/ui/Error'
 import Loader from '~/components/ui/Loader'
 import Transition from '~/components/ui/Transition'
+import { APP_NAME } from '~/utils/constants'
 import getApiErrorMessage from '~/utils/get-api-error-message'
 
 export default function HomePage() {
+   useEffect(() => {
+      document.title = `Home | ${APP_NAME}`
+   }, [])
+
    return (
       <Transition>
          <main>

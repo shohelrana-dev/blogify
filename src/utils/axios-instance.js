@@ -1,6 +1,6 @@
 import axios from 'axios'
 import { SERVER_BASE_URL } from './constants'
-import { clearSession, getSession, setSession } from './session'
+import { clearSession, getSession, hasSession, updateSession } from './session'
 
 const { token } = getSession()
 
@@ -8,7 +8,7 @@ export const api = axios.create({
    baseURL: SERVER_BASE_URL,
    headers: {
       common: {
-         Authorization: `Bearer ${token?.accessToken}`,
+         Authorization: token?.accessToken ? `Bearer ${token?.accessToken}` : '',
          'Content-Type': 'application/json',
       },
    },
@@ -16,15 +16,17 @@ export const api = axios.create({
 })
 
 api.interceptors.response.use(
-   (response) => response.data,
+   (response) => {
+      return response.data
+   },
    async (error) => {
       if (error.response?.status === 403) {
-         const session = getSession()
-         if (!session.token?.refreshToken) {
+         if (!hasSession()) {
             console.log('No session found to generate new access token.')
             return Promise.reject(error)
          }
          try {
+            const session = getSession()
             const originalRequest = error.config
 
             //generate new token using refresh token
@@ -34,7 +36,7 @@ api.interceptors.response.use(
             console.log(`New Token gerenrated.`)
 
             //update auth session
-            setSession({ user: session.user, token: newToken })
+            updateSession({ token: newToken })
 
             //make request with new token
             originalRequest.headers.Authorization = `Bearer ${newToken.accessToken}`
@@ -43,8 +45,8 @@ api.interceptors.response.use(
             console.log('Session might be expired.')
             //clear session
             clearSession()
-            //promise reject
-            return Promise.reject(error)
+            //reload to clear all states
+            window.location.reload()
          }
       }
       return Promise.reject(error)

@@ -1,30 +1,23 @@
 import { useEffect, useRef } from 'react'
 
-export default function usePortal(id = 'portalRoot') {
-   const rootElemRef = useRef(null)
+export default function usePortal() {
+   const portalRootRef = useRef(null)
 
    useEffect(() => {
       // Create the portal root element if it doesn't exist
-      if (!rootElemRef.current) {
-         const existingPortalRoot = document.getElementById(id)
+      if (!portalRootRef.current) {
+         const existingPortalRoot = document.getElementById('portalRoot')
          if (!existingPortalRoot) {
             const portalRoot = document.createElement('div')
-            portalRoot.setAttribute('id', id)
+            portalRoot.setAttribute('id', 'portalRoot')
             document.body.appendChild(portalRoot)
-            rootElemRef.current = portalRoot
+            portalRootRef.current = portalRoot
          } else {
             // Use existing portal root if available
-            rootElemRef.current = existingPortalRoot
+            portalRootRef.current = existingPortalRoot
          }
       }
+   }, [])
 
-      // Cleanup function to remove the portal element on unmount
-      return () => {
-         if (rootElemRef.current) {
-            document.body.removeChild(rootElemRef.current)
-         }
-      }
-   }, [id])
-
-   return rootElemRef.current
+   return portalRootRef.current
 }

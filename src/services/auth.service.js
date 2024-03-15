@@ -7,7 +7,7 @@ import { setSession } from '~/utils/session'
 export function useSignupMutation() {
    return useMutation({
       mutationFn: (userData) => api.post('/auth/register', userData),
-      mutationKey: ['sigunup'],
+      mutationKey: ['auth/sigunup'],
       onSuccess: ({ token, user }) => {
          toast.success('Signup success.')
          setSession({ token, user })
@@ -19,7 +19,7 @@ export function useSignupMutation() {
 export function useLoginMutation() {
    return useMutation({
       mutationFn: (credentials) => api.post('/auth/login', credentials),
-      mutationKey: ['login'],
+      mutationKey: ['auth/login'],
       onSuccess: ({ token, user }) => {
          toast.success('Loggedin.')
          setSession({ token, user })

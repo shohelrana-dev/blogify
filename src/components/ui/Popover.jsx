@@ -1,8 +1,10 @@
 import { useEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
+import usePortal from '~/hooks/usePortal'
 import cn from '~/utils/cn'
 
 export default function Popover(props) {
+   const portalRoot = usePortal()
    const [isVisible, setIsVisible] = useState(props.isOpen || false)
    const popoverRef = useRef(null)
    const triggerRef = useRef(null)
@@ -92,7 +94,7 @@ export default function Popover(props) {
                >
                   {children[1]}
                </div>,
-               document.body
+               portalRoot
             )}
       </>
    )

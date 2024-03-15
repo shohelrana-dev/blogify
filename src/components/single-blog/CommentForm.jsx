@@ -1,11 +1,8 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useState } from 'react'
 import { useParams } from 'react-router-dom'
-import { toast } from 'react-toastify'
 import useAuthState from '~/hooks/useAuthState'
 import useUnauthorizedAlert from '~/hooks/useUnauthorizedAlert'
-import services from '~/services'
-import getApiErrorMessage from '~/utils/get-api-error-message'
+import { useCreateCommentMutation } from '~/services/blog.service'
 import Avatar from '../ui/Avatar'
 import Button from '../ui/Button'
 
@@ -14,13 +11,7 @@ export default function CommentForm() {
    const { user: currentUser, isAuthenticated } = useAuthState()
    const [commentsText, setCommentText] = useState('')
    const unauthorizedAlert = useUnauthorizedAlert()
-   const queryClient = useQueryClient()
-   const createCommentMutation = useMutation({
-      mutationFn: services.blogs.createComment,
-      onSuccess: () => {
-         return queryClient.invalidateQueries({ queryKey: [`blogs/${blogId}`] })
-      },
-   })
+   const createCommentMutation = useCreateCommentMutation()
 
    async function handleSubmitComment(e) {
       e.preventDefault()
@@ -34,11 +25,10 @@ export default function CommentForm() {
       if (!commentsText) return
 
       try {
-         const { message } = await createCommentMutation.mutateAsync({ blogId, content: commentsText })
-         toast.success(message || 'Comment created.')
+         await createCommentMutation.mutateAsync({ blogId, content: commentsText })
          setCommentText('')
       } catch (err) {
-         toast.error(getApiErrorMessage(err))
+         console.error(err)
       }
    }
 
